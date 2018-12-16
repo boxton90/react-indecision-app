@@ -9,11 +9,30 @@ class IndecisionApp extends React.Component {
             options: props.options
         }
     }
+    componentDidMount() {
+        try {
+            const json = localStorage.getItem('options')
+            const options = JSON.parse(json)
+            if (options) {
+                this.setState(() => ({ options: options }))
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.options.length !== this.state.options.length) {
+            const json = JSON.stringify(this.state.options)
+            localStorage.setItem('options', json)
+        }
+    }
     handleDeleteOptions() {
         this.setState(() => ({ options: [] }))
     }
     handleDeleteOption(optionToRemove) {
-        this.setState((prevState) => ({ options: prevState.options.filter((option) => optionToRemove !== option)
+        this.setState((prevState) => ({
+            options: prevState.options.filter((option) => optionToRemove !== option)
         }))
     }
     handlePick() {
@@ -56,7 +75,7 @@ class IndecisionApp extends React.Component {
 }
 
 IndecisionApp.defaultProps = {
-    options : []
+    options: []
 }
 
 const Header = (props) => {
@@ -93,7 +112,7 @@ const Options = (props) => {
                 <Option
                     key={index}
                     optionText={option}
-                    handleDeleteOption={props.handleDeleteOption}/>
+                    handleDeleteOption={props.handleDeleteOption} />
             )}
         </div>
     )
